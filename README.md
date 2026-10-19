@@ -20,13 +20,16 @@ python -m http.server 8000
 
 ## 部署
 
-仓库根目录即为站点根目录。在 GitHub 仓库的 **Settings → Pages** 中选择
-**Deploy from a branch**，分支选 `main`，目录选 `/ (root)`。
+仓库包含 `.github/workflows/pages.yml`：每次推送到 `main` 时，GitHub Actions 会自动
+构建并发布站点；`configure-pages` 的 `enablement: true` 会在首次运行时自动启用 Pages。
+
+若 Actions 无权自动启用，请手动打开 **Settings → Pages**，将 **Source** 设为
+**GitHub Actions**，然后重新运行 `Deploy GitHub Pages` 工作流。
 
 隐私政策页面地址为：
 
 ```
-https://<username>.github.io/shaderbox_web/privacy.html
+https://johnkranz.github.io/shaderbox_web/privacy.html
 ```
 
-若绑定自定义域名，请将上述地址中的域名替换为自定义域名，并在仓库根目录添加 `CNAME` 文件。
+若绑定自定义域名，请在 **Settings → Pages → Custom domain** 中配置，并在仓库根目录添加 `CNAME` 文件。
