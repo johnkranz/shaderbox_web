@@ -7,7 +7,9 @@ ShaderBox 的官方静态站点，包含使用手册与隐私政策。
 | 文件 | 说明 |
 | --- | --- |
 | `index.html` | ShaderBox 使用手册（渲染管线、节点参考、常见问题） |
-| `privacy.html` | 隐私政策（中文 + English） |
+| `privacy.html` | 隐私政策英文版（默认） |
+| `privacy.zh.html` | 隐私政策中文版 |
+| `privacy.css` | 隐私政策页面共享样式 |
 | `PRIVACY.md` | 隐私政策摘要 |
 
 ## 本地预览
@@ -30,8 +32,7 @@ GitHub Pages 已配置为从 `main` 分支根目录直接发布，无需构建�
 
 隐私政策页面地址为：
 
-```
-https://johnkranz.github.io/shaderbox_web/privacy.html
-```
+- English（默认）: `https://johnkranz.github.io/shaderbox_web/privacy.html`
+- 中文: `https://johnkranz.github.io/shaderbox_web/privacy.zh.html`
 
 若绑定自定义域名，请在 **Settings → Pages → Custom domain** 中配置，并在仓库根目录添加 `CNAME` 文件。

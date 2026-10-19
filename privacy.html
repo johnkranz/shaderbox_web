@@ -1,205 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>隐私政策 · ShaderBox</title>
-<meta name="description" content="ShaderBox 隐私政策：本地优先、不收集个人信息，说明 AI 与 ShaderToy 等可选网络功能的第三方数据处理方式。">
-<style>
-:root {
-  --bg: #fafafa;
-  --bg-elev: #ffffff;
-  --bg-code: #f4f4f5;
-  --border: #e5e5e8;
-  --text: #18181b;
-  --text-2: #52525b;
-  --text-3: #a1a1aa;
-  --accent: #6366f1;
-  --accent-soft: #eef2ff;
-  --radius: 12px;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f0f11;
-    --bg-elev: #17171a;
-    --bg-code: #232326;
-    --border: #2a2a2e;
-    --text: #f4f4f5;
-    --text-2: #a1a1aa;
-    --text-3: #6b6b72;
-    --accent: #818cf8;
-    --accent-soft: #1e1b34;
-  }
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-  background: var(--bg); color: var(--text); line-height: 1.75; font-size: 14.5px;
-}
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
-.wrap { max-width: 800px; margin: 0 auto; padding: 48px 24px 80px; }
-.topbar {
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  flex-wrap: wrap; margin-bottom: 36px;
-}
-.back {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--text-2); font-size: 13px;
-}
-.back .logo {
-  width: 26px; height: 26px; border-radius: 8px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
-  display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 800;
-}
-.lang-nav { display: flex; gap: 14px; font-size: 13px; }
-header.page h1 { font-size: 30px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 10px; }
-.updated { color: var(--text-3); font-size: 13px; }
-.summary {
-  margin: 24px 0 8px; padding: 16px 18px;
-  background: var(--accent-soft); border: 1px solid var(--border); border-radius: var(--radius);
-  color: var(--text-2);
-}
-.summary strong { color: var(--text); }
-section.policy { padding-top: 28px; }
-section.policy h2 {
-  font-size: 18px; font-weight: 700; margin: 26px 0 8px;
-  padding-bottom: 6px; border-bottom: 1px solid var(--border);
-}
-section.policy h3 { font-size: 15px; font-weight: 700; margin: 18px 0 6px; }
-section.policy p { margin: 8px 0; color: var(--text-2); }
-section.policy ul { margin: 8px 0 8px 22px; color: var(--text-2); }
-section.policy li { margin: 4px 0; }
-section.policy strong { color: var(--text); }
-code {
-  font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
-  font-size: 12.5px; background: var(--bg-code); padding: 1px 6px; border-radius: 6px;
-}
-.divider { margin: 44px 0; border: 0; border-top: 1px solid var(--border); }
-#english { scroll-margin-top: 24px; }
-footer {
-  margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--border);
-  color: var(--text-3); font-size: 13px;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-}
-@media (max-width: 600px) {
-  .wrap { padding: 28px 18px 56px; }
-  header.page h1 { font-size: 24px; }
-}
-</style>
+<title>Privacy Policy · ShaderBox</title>
+<meta name="description" content="ShaderBox privacy policy: local-first, no personal information collected; optional AI and ShaderToy requests go to third-party services.">
+<link rel="alternate" hreflang="en" href="privacy.html">
+<link rel="alternate" hreflang="zh-CN" href="privacy.zh.html">
+<link rel="stylesheet" href="privacy.css">
 </head>
 <body>
 <div class="wrap">
 
 <div class="topbar">
-  <a class="back" href="index.html"><span class="logo">SB</span>ShaderBox 使用手册</a>
-  <nav class="lang-nav" aria-label="语言">
-    <a href="#chinese">中文</a>
-    <a href="#english">English</a>
+  <a class="back" href="index.html"><span class="logo">SB</span>ShaderBox User Guide</a>
+  <nav class="lang-nav" aria-label="Language">
+    <a class="active" href="privacy.html" aria-current="page">English</a>
+    <a href="privacy.zh.html" lang="zh-CN">中文</a>
   </nav>
 </div>
 
-<header class="page" id="chinese">
-  <h1>ShaderBox 隐私政策</h1>
-  <p class="updated">生效日期：2026 年 10 月 19 日</p>
+<header class="page">
+  <h1>ShaderBox Privacy Policy</h1>
+  <p class="updated">Effective date: October 19, 2026</p>
 </header>
 
 <div class="summary">
-  <strong>一句话概括：</strong>ShaderBox 是一款本地优先的着色器创作工具，无需注册账号。应用本身不收集个人信息，
-  不包含广告、统计或崩溃上报 SDK。只有在你主动使用 AI 辅助或 ShaderToy 浏览/导入时，相关请求才会发送到对应的第三方服务。
+  <strong>In short:</strong> ShaderBox is a local-first shader authoring tool and requires no account.
+  The app itself does not collect personal information and contains no advertising, analytics, or crash-reporting SDKs.
+  Network requests occur only when you actively use optional AI assistance or ShaderToy browsing/import.
 </div>
 
 <section class="policy">
-  <h2>1. 我们收集的信息</h2>
-  <p>
-    ShaderBox 不要求你提供姓名、邮箱、手机号或其他个人身份信息，也不在应用内收集、上传或出售个人数据。
-    应用不包含第三方广告、行为统计、用户画像或崩溃上报 SDK。
-  </p>
-
-  <h2>2. 存储在设备上的数据</h2>
-  <p>以下内容保存在你的设备本地，由你自行控制：</p>
-  <ul>
-    <li>项目、节点图、GLSL 代码、渲染通道配置；</li>
-    <li>你导入或生成的纹理、CubeMap、音频等资源；</li>
-    <li>应用设置，以及（可选的）AI 服务地址、模型名称和 API 密钥；</li>
-    <li>导出的截图、视频等文件。</li>
-  </ul>
-  <p>
-    删除项目、清除应用数据或卸载应用会删除对应的本地数据。若你的操作系统启用了应用数据云备份，
-    备份可能由操作系统或云服务提供商按其隐私政策处理，你可以在系统设置中关闭该备份。
-  </p>
-
-  <h2>3. 网络访问与第三方服务</h2>
-  <p>ShaderBox 只在以下可选功能中访问网络：</p>
-  <h3>AI 辅助</h3>
-  <p>
-    当你主动使用 AI 助手时，提示词、相关的项目或代码上下文，以及你选择提供的渲染截图，会发送到你在设置中指定的
-    AI 服务（例如 DeepSeek、任意 OpenAI 兼容端点，或经 ShaderBox 代理转发到 DashScope / DeepSeek / MiniMax）。
-    这些服务会按各自的隐私政策处理请求内容。API 密钥仅保存在本地，并只用于向你选择的端点发起请求。
-    不启用 AI 功能时，不会发送任何 AI 请求。
-  </p>
-  <h3>ShaderToy 浏览与导入</h3>
-  <p>
-    当你浏览或导入 ShaderToy 作品时，应用会向 <code>shadertoy.com</code> 发起请求以获取公开内容。
-    这些请求受 ShaderToy 自身的隐私政策约束。
-  </p>
-  <h3>其他</h3>
-  <p>除上述功能外，应用不会在后台向其他服务器传输数据。</p>
-
-  <h2>4. 权限</h2>
-  <ul>
-    <li><strong>网络（INTERNET）</strong>：用于上述可选的 AI 与 ShaderToy 功能。</li>
-    <li><strong>振动（VIBRATE）</strong>：用于编辑操作中的触觉反馈。</li>
-    <li><strong>文件访问</strong>：导入和导出通过系统文件选择器完成，应用仅访问你明确选择的文件或目录。</li>
-  </ul>
-  <p>ShaderBox 不申请定位、相机、通讯录、麦克风等权限。</p>
-
-  <h2>5. 数据共享</h2>
-  <p>
-    ShaderBox 不出售、不出租、不交易你的个人信息。只有在实现你主动使用的功能所必需的范围内，
-    请求内容才会发送给上述第三方服务。除此之外，我们不会主动向第三方披露你的数据。
-  </p>
-
-  <h2>6. 数据留存与删除</h2>
-  <p>
-    ShaderBox 不在自有服务器上保存你的项目或个人数据。本地数据的留存时间由你决定，
-    你可以随时在应用内删除项目，或通过系统设置清除应用数据/卸载应用。
-    第三方服务对请求内容的留存方式，由其各自的隐私政策决定。
-  </p>
-
-  <h2>7. 儿童隐私</h2>
-  <p>
-    ShaderBox 不面向 13 岁以下儿童，也不会主动收集儿童的个人信息。
-    如果你是未成年人，请在监护人指导下使用本应用及可选的网络功能。
-  </p>
-
-  <h2>8. 政策更新</h2>
-  <p>
-    我们可能会更新本隐私政策。更新后的版本会发布在本页面，并同步修改页面顶部的生效日期。
-    重大变更会通过项目仓库或应用更新说明进行提示。
-  </p>
-
-  <h2>9. 联系我们</h2>
-  <p>
-    如对本隐私政策有任何疑问或建议，请通过
-    <a href="https://github.com/johnkranz/ShaderBox/issues" target="_blank" rel="noopener noreferrer">GitHub Issues</a>
-    联系我们。
-  </p>
-</section>
-
-<hr class="divider">
-
-<section class="policy" id="english" lang="en">
-  <h1 style="font-size:28px;font-weight:800;margin-bottom:10px;">ShaderBox Privacy Policy</h1>
-  <p class="updated">Effective date: October 19, 2026</p>
-
-  <div class="summary">
-    <strong>In short:</strong> ShaderBox is a local-first shader authoring tool and requires no account.
-    The app itself does not collect personal information and contains no advertising, analytics, or crash-reporting SDKs.
-    Network requests occur only when you actively use optional AI assistance or ShaderToy browsing/import.
-  </div>
-
   <h2>1. Information We Collect</h2>
   <p>
     ShaderBox does not ask for your name, email address, phone number, or other personally identifiable information.
@@ -280,7 +112,7 @@ footer {
 </section>
 
 <footer>
-  <span><a href="index.html">ShaderBox 使用手册</a> · 隐私政策</span>
+  <span><a href="index.html">ShaderBox User Guide</a> · Privacy Policy</span>
   <span>ShaderBox</span>
 </footer>
 
