@@ -20,11 +20,13 @@ python -m http.server 8000
 
 ## 部署
 
-仓库包含 `.github/workflows/pages.yml`：每次推送到 `main` 时，GitHub Actions 会自动
-构建并发布站点；`configure-pages` 的 `enablement: true` 会在首次运行时自动启用 Pages。
+仓库已配置 GitHub Pages，直接使用 `main` 分支根目录发布，无需构建步骤：
 
-若 Actions 无权自动启用，请手动打开 **Settings → Pages**，将 **Source** 设为
-**GitHub Actions**，然后重新运行 `Deploy GitHub Pages` 工作流。
+- **Settings → Pages → Source**: `Deploy from a branch`
+- **Branch**: `main`
+- **Folder**: `/ (root)`
+
+每次推送到 `main` 后，GitHub Pages 会自动更新站点。
 
 隐私政策页面地址为：
 
