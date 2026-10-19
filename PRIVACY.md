@@ -2,5 +2,8 @@
 
 ShaderBox does not collect any personal information.
 
-If you have any questions or suggestions about my Privacy Policy, do not
-hesitate to contact me.
+The full privacy policy, in Chinese and English, is published at
+[`privacy.html`](privacy.html).
+
+If you have any questions or suggestions about this Privacy Policy, please
+open an issue at <https://github.com/johnkranz/ShaderBox/issues>.

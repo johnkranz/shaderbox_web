@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShaderBox 使用手册</title>
+<style>
+:root {
+  --bg: #fafafa;
+  --bg-elev: #ffffff;
+  --bg-code: #f4f4f5;
+  --border: #e5e5e8;
+  --text: #18181b;
+  --text-2: #52525b;
+  --text-3: #a1a1aa;
+  --accent: #6366f1;
+  --accent-soft: #eef2ff;
+  --amber: #d97706;
+  --amber-soft: #fef3c7;
+  --radius: 12px;
+  --sidebar-w: 252px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0f11;
+    --bg-elev: #17171a;
+    --bg-code: #232326;
+    --border: #2a2a2e;
+    --text: #f4f4f5;
+    --text-2: #a1a1aa;
+    --text-3: #6b6b72;
+    --accent: #818cf8;
+    --accent-soft: #1e1b34;
+    --amber: #fbbf24;
+    --amber-soft: #2c2313;
+  }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75; font-size: 14.5px;
+}
+a { color: var(--accent); text-decoration: none; }
+.layout { display: flex; min-height: 100vh; }
+nav.sidebar {
+  width: var(--sidebar-w); position: fixed; top: 0; left: 0; bottom: 0;
+  padding: 28px 20px; border-right: 1px solid var(--border);
+  background: var(--bg-elev); overflow-y: auto; z-index: 10;
+}
+main { margin-left: var(--sidebar-w); flex: 1; padding: 0 48px 80px; }
+.container { max-width: 860px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; color: var(--text); }
+.brand .logo {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  display: grid; place-items: center; color: #fff; font-size: 13px; font-weight: 800;
+}
+.brand-sub { font-size: 12px; color: var(--text-3); margin-bottom: 24px; padding-left: 38px; }
+.nav-group { margin-bottom: 18px; }
+.nav-group h4 {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3); margin-bottom: 5px; padding-left: 10px; font-weight: 600;
+}
+.nav-group a {
+  display: block; padding: 5px 10px; border-radius: 8px;
+  color: var(--text-2); font-size: 13px; transition: all .15s;
+}
+.nav-group a:hover { color: var(--text); background: var(--bg-code); }
+.nav-group a.active { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+
+.hero { padding: 60px 0 40px; border-bottom: 1px solid var(--border); }
+.hero .eyebrow {
+  display: inline-flex; gap: 6px; font-size: 12px; color: var(--accent); font-weight: 600;
+  background: var(--accent-soft); padding: 4px 12px; border-radius: 999px; margin-bottom: 18px;
+}
+.hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 14px; }
+.hero p.lead { font-size: 16px; color: var(--text-2); max-width: 660px; }
+
+section.doc { padding: 40px 0 8px; }
+section.doc h2 {
+  font-size: 23px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 6px;
+  display: flex; align-items: center; gap: 10px;
+}
+section.doc h2 .num {
+  font-size: 13px; font-weight: 700; color: var(--accent);
+  background: var(--accent-soft); border-radius: 8px;
+  min-width: 28px; height: 28px; display: inline-grid; place-items: center; flex-shrink: 0;
+  padding: 0 6px;
+}
+section.doc > p.desc { color: var(--text-2); margin-bottom: 16px; }
+h3 { font-size: 16px; font-weight: 700; margin: 26px 0 8px; }
+h4 { font-size: 14px; font-weight: 700; margin: 16px 0 4px; }
+p { margin-bottom: 10px; color: var(--text-2); }
+p strong, li strong, td strong { color: var(--text); }
+
+ol.steps { list-style: none; counter-reset: step; margin: 14px 0; }
+ol.steps li { counter-increment: step; position: relative; padding: 8px 0 8px 40px; color: var(--text-2); }
+ol.steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 9px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: 12.5px; font-weight: 700; display: grid; place-items: center;
+}
+ol.steps li strong { color: var(--text); }
+
+.tip {
+  display: flex; gap: 10px; align-items: flex-start;
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  border-radius: var(--radius); padding: 12px 16px; margin: 14px 0;
+  font-size: 13.5px; color: var(--text-2);
+}
+.tip .t-icon { flex-shrink: 0; font-size: 15px; line-height: 1.6; }
+.warn { background: var(--amber-soft); border-color: color-mix(in srgb, var(--amber) 30%, transparent); }
+
+.table-wrap {
+  overflow-x: auto; border: 1px solid var(--border);
+  border-radius: var(--radius); background: var(--bg-elev); margin: 14px 0;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 8px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-weight: 600; color: var(--text-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; background: var(--bg-code); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+td:first-child { white-space: nowrap; }
+td.wrap, .table-wrap td { white-space: normal; }
+
+/* 节点详解卡片 */
+.node-card {
+  background: var(--bg-elev); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px 22px; margin: 18px 0;
+}
+.node-card .nc-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.node-card .nc-head h3 { margin: 0; font-size: 16.5px; }
+.cat-tag {
+  font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px; color: #fff;
+}
+.cat-value { background: #b04a4c; }
+.cat-converter { background: #4c4cb8; }
+.cat-texture { background: #b87a3a; }
+.cat-endpoint { background: #8a4b60; }
+.cat-complex { background: #5d7a3a; }
+.node-card .nc-io { font-size: 12.5px; color: var(--text-3); margin-bottom: 8px; }
+.node-card p { font-size: 13.5px; }
+
+/* 数据类型 / 端口徽章 */
+.type-tag {
+  display: inline-block; font-size: 11.5px; font-weight: 600; padding: 0 8px;
+  border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+  font-family: "JetBrains Mono", Consolas, monospace;
+}
+.port-tag {
+  display: inline-block; font-size: 11.5px; font-weight: 600; padding: 0 8px;
+  border-radius: 6px; background: var(--bg-code); border: 1px solid var(--border); color: var(--text);
+}
+
+code {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  background: var(--bg-code); border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 6px; font-size: 12px; color: var(--accent);
+}
+kbd {
+  display: inline-block; padding: 1px 7px; border-radius: 6px;
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-bottom-width: 2px; font-size: 12px;
+  font-family: "JetBrains Mono", Consolas, monospace; color: var(--text);
+}
+pre {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px;
+  overflow-x: auto; margin: 12px 0; font-size: 12.5px; line-height: 1.6;
+}
+pre code { background: none; border: none; padding: 0; color: var(--text-2); }
+
+/* 管线图 */
+.diagram {
+  background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; margin: 14px 0; overflow-x: auto;
+}
+.diagram pre { background: none; border: none; padding: 0; margin: 0; color: var(--text-2); font-size: 12px; line-height: 1.55; }
+
+ul.ops { list-style: none; margin: 10px 0; }
+ul.ops li { padding: 5px 0 5px 22px; position: relative; color: var(--text-2); }
+ul.ops li::before {
+  content: ""; position: absolute; left: 4px; top: 13px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: .6;
+}
+
+.state-badge {
+  display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 10px; border-radius: 999px;
+}
+.st-ok { color: #16a34a; background: color-mix(in srgb, #16a34a 12%, transparent); }
+.st-err { color: #dc2626; background: color-mix(in srgb, #dc2626 12%, transparent); }
+.st-wip { color: var(--amber); background: color-mix(in srgb, var(--amber) 14%, transparent); }
+
+footer {
+  margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border);
+  color: var(--text-3); font-size: 13px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+@media (max-width: 900px) {
+  nav.sidebar { display: none; }
+  main { margin-left: 0; padding: 0 20px 60px; }
+  .hero h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="sidebar">
+  <div class="brand"><span class="logo">SB</span>ShaderBox</div>
+  <div class="brand-sub">使用手册 · User Guide</div>
+  <div class="nav-group">
+    <h4>入门</h4>
+    <a href="#intro">ShaderBox 是什么</a>
+    <a href="#quickstart">快速上手</a>
+  </div>
+  <div class="nav-group">
+    <h4>渲染器结构</h4>
+    <a href="#pipeline">渲染管线</a>
+    <a href="#passes">渲染通道详解</a>
+    <a href="#channel">通道间数据流</a>
+    <a href="#compile">编译系统</a>
+    <a href="#uniforms">内置输入变量</a>
+  </div>
+  <div class="nav-group">
+    <h4>节点图基础</h4>
+    <a href="#basics">基本操作</a>
+    <a href="#types">数据类型与端口</a>
+  </div>
+  <div class="nav-group">
+    <h4>节点参考</h4>
+    <a href="#n-input">输入 Input</a>
+    <a href="#n-constant">常量 Constant</a>
+    <a href="#n-math">数学计算 Math</a>
+    <a href="#n-condition">条件 Condition</a>
+    <a href="#n-swizzle">分量重排 Swizzling</a>
+    <a href="#n-veccompose">向量合成 Compose</a>
+    <a href="#n-vecdecompose">向量分解 Decompose</a>
+    <a href="#n-texture">纹理采样 Texture</a>
+    <a href="#n-proc">程序化纹理 Noise</a>
+    <a href="#n-output">输出 Output</a>
+    <a href="#n-group">节点组 Group</a>
+    <a href="#n-func">自定义函数 Func</a>
+    <a href="#n-loop">循环与累加器</a>
+  </div>
+  <div class="nav-group">
+    <h4>附录</h4>
+    <a href="#builtins">内置 GLSL 函数</a>
+    <a href="#faq">常见问题</a>
+    <a href="#privacy">隐私政策</a>
+  </div>
+</nav>
+
+<main>
+<div class="container">
+
+<!-- ================= Hero ================= -->
+<header class="hero">
+  <span class="eyebrow">📖 使用手册</span>
+  <h1>ShaderBox 用户指南</h1>
+  <p class="lead">
+    从渲染器的工作原理，到每一个节点端口的含义——这份手册详细讲解 ShaderBox 的全部创作机制。
+  </p>
+</header>
+
+<!-- ================= 01 简介 ================= -->
+<section class="doc" id="intro">
+  <h2><span class="num">1</span>ShaderBox 是什么</h2>
+  <p class="desc">一款着色器创作应用：编写的是逐像素运行的图形程序，普通人也能上手。</p>
+  <p>
+    着色器（Shader）是一段「对画面上每个像素同时执行」的小程序。你不需要理解整幅画面，
+    只需要告诉 ShaderBox：<strong>「坐标为 (x, y) 的这个像素，此刻应该是什么颜色？」</strong>
+    剩下的交给 GPU——它会让画面中数百万个像素同时执行你的规则，因此实时动画也毫无压力。
+  </p>
+  <p>ShaderBox 提供两种等价的创作方式，可以单独使用，也可以混搭：</p>
+  <ul class="ops">
+    <li><strong>节点图编辑</strong> — 拖拽节点、连上端口，画面逻辑一目了然，无需写代码。节点图会自动编译成 GLSL。</li>
+    <li><strong>GLSL 代码编辑</strong> — 直接书写着色器代码，带语法高亮、自动补全、实时错误提示，与节点图双向同步。</li>
+  </ul>
+</section>
+
+<!-- ================= 02 快速上手 ================= -->
+<section class="doc" id="quickstart">
+  <h2><span class="num">2</span>快速上手</h2>
+  <p class="desc">五分钟做出你的第一个作品。</p>
+  <ol class="steps">
+    <li><strong>创建项目</strong> — 在首页点击「新建项目」，为它起个名字。</li>
+    <li><strong>打开编辑器</strong> — 点击项目卡片进入，你会看到默认的渲染画面。</li>
+    <li><strong>进入 Image 通道</strong> — Image 通道决定最终呈现的画面，大多数创作从这里开始。</li>
+    <li><strong>搭建第一个节点图</strong> — 右键空白处新建节点：用「输入」节点取 UV 坐标，用「数学计算」节点做一点变化，再连到「输出」节点，画面立刻改变。</li>
+    <li><strong>设为壁纸</strong> — 满意后通过导出菜单设为动态壁纸或保存截图。</li>
+  </ol>
+  <div class="tip"><span class="t-icon">💡</span><span>项目会<strong>自动保存</strong>；几乎所有节点操作都可以用 <kbd>Ctrl</kbd>+<kbd>Z</kbd> 撤销，大胆尝试。</span></div>
+</section>
+
+<!-- ================= 03 渲染管线 ================= -->
+<section class="doc" id="pipeline">
+  <h2><span class="num">3</span>渲染管线</h2>
+  <p class="desc">理解 ShaderBox 如何把你的编辑变成屏幕上的画面。</p>
+  <p>
+    每一帧，渲染器按固定流程执行：先加载你的编辑模型，然后按顺序运行各个渲染通道，
+    每个通道的输出保存为一张 GPU 纹理，供下游通道读取，最终由 Image 通道输出到屏幕。
+  </p>
+  <div class="diagram">
+<pre>ShaderEditorModel（你的编辑内容）
+  │
+  ▼ RenderEnv.loadModel()
+  │
+  ├──→ PresetRenderer    ← Image 通道：最终画面，渲染到屏幕
+  │
+  ├──→ BufferRenderer    ← Buffer A/B/C/D：离屏渲染到纹理
+  │                          输出通过 ChannelSlot 提供给其他通道
+  │
+  └──→ CubeMapRenderer   ← CubeMap 通道：6 个面分别渲染为立方体贴图
+
+  通道输出 ──→ ChannelSlot（OpenGL 纹理）──→ 下游通道采样读取</pre>
+  </div>
+  <h3>执行顺序</h3>
+  <p>
+    通道按 <strong>BufferA → BufferB → BufferC → BufferD → CubeMap → Image</strong> 的顺序执行。
+    因此 Image 通道可以读取所有 Buffer 的结果，而 BufferA 读不到排在它后面的 BufferB——
+    需要多个中间步骤时，请按依赖顺序分配到 A→B→C→D。
+  </p>
+</section>
+
+<!-- ================= 04 渲染通道 ================= -->
+<section class="doc" id="passes">
+  <h2><span class="num">4</span>渲染通道详解</h2>
+  <p class="desc">一个作品由若干「渲染通道（Render Pass）」组成，每个通道是一段独立的着色器程序。</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>通道</th><th>作用</th><th>输出</th><th>典型用途</th></tr></thead>
+      <tbody class="wrap">
+        <tr>
+          <td><strong>Image</strong></td>
+          <td>最终画面，每个作品必有且只有一个。渲染结果直接显示在屏幕 / 壁纸上。</td>
+          <td>屏幕</td>
+          <td>合成所有中间结果，输出最终颜色</td>
+        </tr>
+        <tr>
+          <td><strong>Buffer A–D</strong></td>
+          <td>离屏渲染的中间缓冲。每帧的结果会<strong>保留到下一帧</strong>，因此可以做「反馈」效果。</td>
+          <td>一张纹理（分辨率可在设置中调整）</td>
+          <td>流体模拟、轨迹拖尾、迭代计算、延迟合成</td>
+        </tr>
+        <tr>
+          <td><strong>CubeMap</strong></td>
+          <td>立方体贴图通道，对立方体的 6 个面分别执行一次着色器。</td>
+          <td>一张立方体贴图</td>
+          <td>环境反射、天空盒、全景效果</td>
+        </tr>
+        <tr>
+          <td><strong>Common</strong></td>
+          <td>不是渲染通道，而是存放各通道共用 GLSL 代码的工具函数区。</td>
+          <td>—</td>
+          <td>放公共函数、常量定义，避免重复</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>Buffer 通道的反馈机制</h3>
+  <p>
+    Buffer 通道「本帧结果 = f(本帧输入, 上一帧结果)」的特性是 ShaderToy 类效果的核心。
+    例如把上一帧画面偏移 1 像素后与新内容叠加，就能得到拖尾；反复采样自身扰动，
+    就能得到类流体效果。
+  </p>
+  <h3>通道操作</h3>
+  <ul class="ops">
+    <li><strong>切换</strong> — 点击通道标签切换当前编辑的通道。</li>
+    <li><strong>复制 / 重命名 / 交换 / 删除</strong> — 在通道菜单中操作。交换用于调整执行顺序。</li>
+  </ul>
+  <div class="tip"><span class="t-icon">💡</span><span>Buffer 通道的分辨率独立于屏幕分辨率，在设置中调低可以大幅提升性能，且不影响 Image 通道的清晰度。</span></div>
+</section>
+
+<!-- ================= 05 通道数据流 ================= -->
+<section class="doc" id="channel">
+  <h2><span class="num">5</span>通道间的数据流</h2>
+  <p class="desc">通道不是孤岛：它们通过「通道槽位」交换渲染结果。</p>
+  <p>
+    每个渲染通道在渲染管线中对应一个<strong>通道槽位（ChannelSlot）</strong>，
+    本质是一张 OpenGL 纹理。下游通道通过「纹理采样」节点读取槽位内容，
+    就像读取一张普通图片一样。
+  </p>
+  <div class="diagram">
+<pre>BufferA 渲染 ──→ ChannelSlot A ──┐
+BufferB 渲染 ──→ ChannelSlot B ──┼──→ Image 通道用「纹理采样」节点
+BufferC 渲染 ──→ ChannelSlot C ──┤    读任意槽位作为输入
+BufferD 渲染 ──→ ChannelSlot D ──┘</pre>
+  </div>
+  <p>
+    读取其他 Buffer 的输出时，使用<strong>纹理采样节点</strong>并把纹理源选为对应的
+    Channel（A/B/C/D）即可。这也是跨通道传值、做多 pass 效果的唯一方式。
+  </p>
+</section>
+
+<!-- ================= 06 编译系统 ================= -->
+<section class="doc" id="compile">
+  <h2><span class="num">6</span>编译系统</h2>
+  <p class="desc">你的节点图 / 代码在被 GPU 执行前会经历编译，了解它能帮你快速排查问题。</p>
+  <h3>编译状态</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>状态</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><span class="state-badge st-wip">编译中</span></td><td>正在把节点图转换成 GLSL 并提交 GPU 编译，画面会短暂保持上一帧。</td></tr>
+        <tr><td><span class="state-badge st-ok">成功</span></td><td>编译通过，渲染器开始用新代码逐帧渲染。</td></tr>
+        <tr><td><span class="state-badge st-err">失败</span></td><td>编译出错，错误列表会标明每个错误的<strong>行号与描述</strong>，点击可定位。</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>节点图 → GLSL 的过程</h3>
+  <ol class="steps">
+    <li><strong>拓扑排序</strong> — 沿连线解析节点依赖，确定每个节点代码的先后顺序。</li>
+    <li><strong>逐节点生成语句</strong> — 每个节点输出对应的 GLSL 表达式或语句（详见节点参考）。</li>
+    <li><strong>合并为完整着色器</strong> — 注入 uniform 声明与依赖的工具函数，生成完整程序。</li>
+    <li><strong>GPU 编译</strong> — 交给 OpenGL 编译链接，出错则回读错误信息。</li>
+  </ol>
+  <h3>导出目标</h3>
+  <p>
+    除内置 GLSL 渲染外，节点图还可以导出为 <strong>Godot 4.x</strong> 的
+    <code>.gdshader</code>（canvas_item）着色器，用于在 Godot 引擎中实时刷新使用。
+  </p>
+</section>
+
+<!-- ================= 07 内置输入变量 ================= -->
+<section class="doc" id="uniforms">
+  <h2><span class="num">7</span>内置输入变量</h2>
+  <p class="desc">渲染器在每帧自动注入这些变量，「输入」节点可以直接取用。</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>变量</th><th>类型</th><th>含义</th><th>典型用法</th></tr></thead>
+      <tbody>
+        <tr><td><code>uv</code></td><td><span class="type-tag">Vec2</span></td><td>当前像素的归一化坐标，画面左下角为 (0,0)，右上角为 (1,1)</td><td>几乎所有效果的位置依据</td></tr>
+        <tr><td><code>iTime</code></td><td><span class="type-tag">Float</span></td><td>运行时间（秒），持续增长</td><td>做动画：<code>sin(iTime)</code></td></tr>
+        <tr><td><code>iResolution</code></td><td><span class="type-tag">Vec3</span></td><td>画布分辨率。x = 宽，y = 高（单位像素），z = 宽高比</td><td>宽高比校正、按比例布局；取 <code>uv = fragCoord.xy / iResolution.xy</code> 即归一化坐标</td></tr>
+        <tr><td><code>fragCoord</code></td><td><span class="type-tag">Vec4</span></td><td>当前像素的窗口像素坐标（非归一化）</td><td>需要像素级精度的计算</td></tr>
+        <tr><td><code>iMouse</code></td><td><span class="type-tag">Vec4</span></td><td>鼠标 / 触摸状态。xy = 当前位置（像素坐标，拖动时更新），z = 按下标志（按住为 1，松开为 0），w 未使用</td><td>交互效果；用 <code>iMouse.z</code> 判断是否按住</td></tr>
+        <tr><td><code>iFrame</code></td><td><span class="type-tag">Int</span></td><td>当前帧号，每帧 +1</td><td>逐帧动画、定时触发</td></tr>
+        <tr><td><code>iTimeDelta</code></td><td><span class="type-tag">Float</span></td><td>上一帧到本帧的时间间隔（秒）</td><td>与帧率无关的速度计算</td></tr>
+        <tr><td><code>iFrameRate</code></td><td><span class="type-tag">Float</span></td><td>当前帧率（FPS）</td><td>性能监测、自适应质量</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="tip"><span class="t-icon">💡</span><span>「输入」节点还支持<strong>自定义输入</strong>：填入任意变量名或表达式，适合配合自己写的 GLSL 代码使用。</span></div>
+</section>
+
+<!-- ================= 08 节点图基础 ================= -->
+<section class="doc" id="basics">
+  <h2><span class="num">8</span>节点图基本操作</h2>
+  <p class="desc">节点图编辑器的常用手势与快捷键。</p>
+  <ul class="ops">
+    <li><strong>新建节点</strong> — 空白处<strong>右键</strong>（移动端长按）；桌面端按 <kbd>Space</kbd> 在视口中央打开。</li>
+    <li><strong>移动 / 缩放视图</strong> — 拖拽空白平移，滚轮或双指缩放。</li>
+    <li><strong>连线</strong> — 从输出端口圆点拖到输入端口；端口类型匹配才能连上，拖拽时会对齐最近的兼容端口。</li>
+    <li><strong>断开</strong> — 把连线一端拖离后松手。</li>
+    <li><strong>内嵌常量</strong> — 很多节点的输入端口即使不连线也能工作：点开端口可以直接填一个常量值。</li>
+    <li><strong>属性编辑</strong> — 点击节点上的数值 / 下拉框 / 颜色块修改参数。</li>
+    <li><strong>预览</strong> — 任意节点可开启输出预览，从输出端逐级往前看，快速定位画面异常的环节。</li>
+  </ul>
+  <h3>桌面端快捷键</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>按键</th><th>功能</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Delete</kbd> / <kbd>Backspace</kbd></td><td>删除选中节点</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>X</kbd> / <kbd>V</kbd></td><td>复制 / 剪切 / 粘贴（粘贴到视口中心）</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>原位复制一份（偏移 24px）</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td>全选</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>撤销 / 重做</td></tr>
+        <tr><td><kbd>F</kbd></td><td>视图适配所有节点</td></tr>
+        <tr><td><kbd>Space</kbd></td><td>打开节点创建面板</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>清除选择</td></tr>
+        <tr><td>右键空白</td><td>在该位置新建节点</td></tr>
+        <tr><td>右键节点</td><td>节点菜单（重命名 / 选择上游 / 复制 / 删除）</td></tr>
+        <tr><td>左键拖拽空白</td><td>框选节点</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 09 类型与端口 ================= -->
+<section class="doc" id="types">
+  <h2><span class="num">9</span>数据类型与端口</h2>
+  <p class="desc">连线时两端的类型必须兼容；端口颜色就是类型提示。</p>
+  <h3>数据类型</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>类型</th><th>含义</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><span class="type-tag">Float</span></td><td>标量</td><td>单个数值，如 0.5、时间、距离</td></tr>
+        <tr><td><span class="type-tag">Int</span></td><td>整数</td><td>帧号等整数值</td></tr>
+        <tr><td><span class="type-tag">Bool</span></td><td>布尔</td><td>真 / 假，用于条件判断</td></tr>
+        <tr><td><span class="type-tag">Vec2</span></td><td>二维向量</td><td>两个分量，如 UV 坐标 (x, y)</td></tr>
+        <tr><td><span class="type-tag">Vec3</span></td><td>三维向量</td><td>如颜色 RGB、空间坐标 xyz</td></tr>
+        <tr><td><span class="type-tag">Vec4</span></td><td>四维向量</td><td>如带透明度的颜色 RGBA</td></tr>
+        <tr><td><span class="type-tag">Mat2/3/4</span></td><td>矩阵</td><td>旋转、缩放等变换</td></tr>
+        <tr><td><span class="type-tag">Sampler2D</span></td><td>2D 采样器</td><td>一张可采样的纹理（图片 / Buffer 输出）</td></tr>
+        <tr><td><span class="type-tag">SamplerCube</span></td><td>立方体采样器</td><td>立方体贴图，用于环境反射</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>颜色约定</h3>
+  <p>向量分量按 <code>rgba</code> 顺序命名：Vec2 的两个分量叫 <code>r、g</code>（即 x、y），Vec3 是 <code>r、g、b</code>，Vec4 是 <code>r、g、b、a</code>。分量数（1/2/3/4 个字母）决定了结果类型是 Float / Vec2 / Vec3 / Vec4。</p>
+  <h3>节点分类</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>分类</th><th>颜色</th><th>节点</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Value</strong>（值）</td><td>红</td><td>输入、常量、迭代索引、读取累加器</td></tr>
+        <tr><td><strong>Converter</strong>（转换）</td><td>蓝</td><td>数学计算、条件、分量重排、向量合成 / 分解</td></tr>
+        <tr><td><strong>Texture</strong>（纹理）</td><td>橙</td><td>纹理采样、程序化纹理</td></tr>
+        <tr><td><strong>Endpoint</strong>（端点）</td><td>紫红</td><td>输出、组输入 / 组输出、累加器初值 / 写入、中断</td></tr>
+        <tr><td><strong>Complex</strong>（复合）</td><td>绿</td><td>节点组、自定义函数</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 10 节点参考 ================= -->
+<section class="doc" id="nodes">
+  <h2><span class="num">10</span>节点参考</h2>
+  <p class="desc">全部节点的端口、参数与用法。标 <code>◇</code> 的端口支持内嵌常量（不连线时可直接填值）。</p>
+
+  <!-- Input -->
+  <div class="node-card" id="n-input">
+    <div class="nc-head"><h3>输入 Input</h3><span class="cat-tag cat-value">Value</span></div>
+    <div class="nc-io">输入端口：无　·　输出：<span class="port-tag">Output</span> 类型随所选输入变化</div>
+    <p>提供渲染器注入的标准输入变量（见第 7 节完整列表）。</p>
+    <h4>可选项</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>输入</th><th>输出类型</th></tr></thead>
+      <tbody>
+        <tr><td><code>uv</code>（纹理坐标）</td><td><span class="type-tag">Vec2</span></td></tr>
+        <tr><td><code>iTime</code>（时间）</td><td><span class="type-tag">Float</span></td></tr>
+        <tr><td><code>iResolution</code>（分辨率）</td><td><span class="type-tag">Vec3</span></td></tr>
+        <tr><td><code>fragCoord</code>（像素坐标）</td><td><span class="type-tag">Vec4</span></td></tr>
+        <tr><td><code>iMouse</code>（鼠标）</td><td><span class="type-tag">Vec4</span></td></tr>
+        <tr><td><code>iFrame</code>（帧号）</td><td><span class="type-tag">Int</span></td></tr>
+        <tr><td><code>iTimeDelta</code>（帧间隔）</td><td><span class="type-tag">Float</span></td></tr>
+        <tr><td><code>iFrameRate</code>（帧率）</td><td><span class="type-tag">Float</span></td></tr>
+        <tr><td>自定义（Customized）</td><td>随表达式而定</td></tr>
+      </tbody>
+    </table></div>
+    <h4>用法示例</h4>
+    <p>「输入 uv」→「数学计算 sin」→「输出」，就会得到随位置波动的条纹——这是理解「逐像素编程」的第一课。</p>
+  </div>
+
+  <!-- Constant -->
+  <div class="node-card" id="n-constant">
+    <div class="nc-head"><h3>常量 Constant</h3><span class="cat-tag cat-value">Value</span></div>
+    <div class="nc-io">输入端口：无　·　输出：<span class="port-tag">Value</span> Float / Vec2 / Vec3 / Vec4</div>
+    <p>输出一个固定数值。选择类型后逐分量填写，如 Vec3 (1.0, 0.5, 0.0) 是一个橙色。</p>
+    <h4>要点</h4>
+    <ul class="ops">
+      <li>可选择以 <strong>uniform</strong> 形式输出：常量变成可由外部（如 AI 工具、导出目标）调整的参数，而不是硬编码进代码。</li>
+      <li>单个不常改的数值，用端口内嵌常量（<code>◇</code>）往往比单独放一个常量节点更简洁；需要<strong>多处共用</strong>同一个值时再抽成常量节点。</li>
+    </ul>
+  </div>
+
+  <!-- Math -->
+  <div class="node-card" id="n-math">
+    <div class="nc-head"><h3>数学计算 Math</h3><span class="cat-tag cat-converter">Converter</span></div>
+    <div class="nc-io">输入：<span class="port-tag">Value ◇</span> A / B / C（数量随函数而定）　·　输出：<span class="port-tag">Result</span></div>
+    <p>执行一个数学函数或运算。除特殊注明外，输入输出同类型，可在 Float / Vec2 / Vec3 / Vec4 中选择（向量类型时函数逐分量执行）。</p>
+    <h4>函数一览（按分类分组）</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>分类</th><th>函数</th><th>输入</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="7"><strong>运算符</strong></td><td><code>+ 加</code> / <code>− 减</code> / <code>× 乘</code> / <code>÷ 除</code></td><td>A, B</td><td>四则运算</td></tr>
+        <tr><td><code>mod 取模</code></td><td>A, B</td><td>A 除以 B 的余数；配合 iTime 常用于循环动画</td></tr>
+        <tr><td><code>pow 幂</code></td><td>A, B</td><td>A 的 B 次方</td></tr>
+        <tr><td><code>fma 乘加</code></td><td>A, B, C</td><td>A×B + C，单步完成缩放再平移</td></tr>
+        <tr><td><code>max / min</code></td><td>A, B</td><td>取较大 / 较小值</td></tr>
+        <tr><td><code>clamp 夹取</code></td><td>A, B, C</td><td>把 A 限制在 [B, C] 区间</td></tr>
+        <tr><td><code>step / smoothstep</code></td><td>A, B / A, B, C</td><td>阶跃 / 平滑阶跃，图形锐利边缘与柔和渐变的核心</td></tr>
+        <tr><td rowspan="6"><strong>数学</strong></td><td><code>floor / ceil / round</code></td><td>A</td><td>向下 / 向上 / 四舍五入取整</td></tr>
+        <tr><td><code>fract</code></td><td>A</td><td>取小数部分（<code>x − floor(x)</code>），做重复图案的关键</td></tr>
+        <tr><td><code>abs 绝对值</code> / <code>sign 符号</code></td><td>A</td><td>绝对值 / 取符号（−1, 0, 1）</td></tr>
+        <tr><td><code>sqrt 平方根</code> / <code>inversesqrt</code></td><td>A</td><td>平方根 / 平方根倒数</td></tr>
+        <tr><td><code>log / log2 / exp / exp2</code></td><td>A</td><td>指数与对数</td></tr>
+        <tr><td><code>mix 混合</code></td><td>A, B, C</td><td>按 C（0→1）在 A、B 之间插值，调色与过渡的基础</td></tr>
+        <tr><td rowspan="7"><strong>向量</strong></td><td><code>length 长度</code></td><td>A</td><td>向量模长，输出 <strong>Float</strong>；<code>length(uv − 0.5)</code> 即到中心的距离</td></tr>
+        <tr><td><code>distance 距离</code></td><td>A, B</td><td>两点间距，输出 <strong>Float</strong></td></tr>
+        <tr><td><code>normalize 归一化</code></td><td>A</td><td>转为单位向量（方向不变，长度为 1）</td></tr>
+        <tr><td><code>dot 点积</code></td><td>A, B</td><td>点积，输出 <strong>Float</strong>；常用于光照方向判断</td></tr>
+        <tr><td><code>cross 叉积</code></td><td>A, B（仅 Vec3）</td><td>叉积，得到垂直于两向量的方向</td></tr>
+        <tr><td><code>reflect 反射</code> / <code>refract 折射</code></td><td>A, B (, C)</td><td>反射 / 折射方向；refract 的 C 为折射率（Float）</td></tr>
+        <tr><td><code>faceforward</code></td><td>A, B, C</td><td>把向量翻转到朝向 C 一侧</td></tr>
+        <tr><td rowspan="5"><strong>三角函数</strong></td><td><code>sin / cos / tan</code></td><td>A</td><td>正弦 / 余弦 / 正切（弧度制）</td></tr>
+        <tr><td><code>asin / acos / atan</code></td><td>A</td><td>反正弦 / 反余弦 / 反正切</td></tr>
+        <tr><td><code>radians / degrees</code></td><td>A</td><td>弧度 ↔ 角度互换</td></tr>
+        <tr><td><code>sinh / cosh / tanh</code></td><td>A</td><td>双曲正弦 / 余弦 / 正切</td></tr>
+        <tr><td><code>asinh / acosh / atanh</code></td><td>A</td><td>反双曲函数</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tip"><span class="t-icon">💡</span><span>高频组合：<code>fract(iTime)</code> = 0→1 循环计时；<code>smoothstep(a, b, x)</code> = 柔和遮罩；<code>mix(颜色A, 颜色B, t)</code> = 渐变。</span></div>
+  </div>
+
+  <!-- Condition -->
+  <div class="node-card" id="n-condition">
+    <div class="nc-head"><h3>条件 Condition</h3><span class="cat-tag cat-converter">Converter</span></div>
+    <div class="nc-io">输入：<span class="port-tag">Value ◇</span> A、B　·　输出：<span class="port-tag">Output</span> <span class="type-tag">Bool</span></div>
+    <p>比较两个输入，输出布尔结果，供循环的「中断」节点或你自己的逻辑使用。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>条件类型</th><th>输入类型</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td><code>A &lt; B</code></td><td>Float, Float</td><td>A 小于 B</td></tr>
+        <tr><td><code>A &gt; B</code></td><td>Float, Float</td><td>A 大于 B</td></tr>
+        <tr><td><code>A 或 B</code></td><td>Bool, Bool</td><td>逻辑或</td></tr>
+        <tr><td><code>A 且 B</code></td><td>Bool, Bool</td><td>逻辑与</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- Swizzling -->
+  <div class="node-card" id="n-swizzle">
+    <div class="nc-head"><h3>分量重排 Swizzling</h3><span class="cat-tag cat-converter">Converter</span></div>
+    <div class="nc-io">输入：<span class="port-tag">Input ◇</span> Vec2 / Vec3 / Vec4　·　输出：可动态增删的多个端口</div>
+    <p>从向量中按顺序抽取分量，相当于 GLSL 的 <code>.xyz</code> 写法。每个输出口用 <code>rgba</code> 组合命名，名字长度决定输出类型：<code>r</code> → Float，<code>rg</code> → Vec2，<code>rgb</code> → Vec3，<code>rgba</code> → Vec4。</p>
+    <h4>用法示例</h4>
+    <p>纹理采样输出 RGBA，但你只要亮度感——加一个 Swizzling，输出端口设为 <code>rrr</code>（三个分量都取 R），就得到灰度图。</p>
+  </div>
+
+  <!-- VecCompose -->
+  <div class="node-card" id="n-veccompose">
+    <div class="nc-head"><h3>向量合成 Vec Compose</h3><span class="cat-tag cat-converter">Converter</span></div>
+    <div class="nc-io">输入：可动态增删的多个端口 <span class="port-tag">◇</span>　·　输出：<span class="port-tag">Output</span> Vec2 / Vec3 / Vec4</div>
+    <p>把若干小分量拼成一个大向量（如 <code>vec3(a, b, c)</code>）。输入端口按累计维度自动命名为 <code>r、g、b、a</code>，可以是 Float 或更小的向量（如 Vec2 + Float → Vec3）。</p>
+    <h4>用法示例</h4>
+    <p>把三个 Float 端口分别设为 1.0、0.4、0.2，输出即颜色 (1.0, 0.4, 0.2)，接进「输出」节点即可上屏。</p>
+  </div>
+
+  <!-- VecDecompose -->
+  <div class="node-card" id="n-vecdecompose">
+    <div class="nc-head"><h3>向量分解 Vec Decompose</h3><span class="cat-tag cat-converter">Converter</span></div>
+    <div class="nc-io">输入：<span class="port-tag">Input ◇</span> Vec2 / Vec3 / Vec4　·　输出：<span class="port-tag">R</span> <span class="port-tag">G</span> <span class="port-tag">B</span> <span class="port-tag">A</span>（均为 Float）</div>
+    <p>把向量拆成单分量，输出口数量与输入维度一致。典型用途：把 UV 拆开，对 x、y 分别做不同处理后再用「向量合成」拼回去。</p>
+  </div>
+
+  <!-- Texture -->
+  <div class="node-card" id="n-texture">
+    <div class="nc-head"><h3>纹理采样 Texture</h3><span class="cat-tag cat-texture">Texture</span></div>
+    <div class="nc-io">输入：随采样函数（坐标 <span class="port-tag">◇</span> + Lod <span class="port-tag">◇</span>）　·　输出：<span class="port-tag">Output</span> <span class="type-tag">Vec4</span>（RGBA）</div>
+    <p>读取一张纹理的颜色。纹理源支持三类：</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>纹理源</th><th>坐标类型</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Sampler2D</strong></td><td><span class="type-tag">Vec2</span></td><td>普通 2D 图片 / CubeMap 之外的大部分纹理</td></tr>
+        <tr><td><strong>Sampler3D</strong></td><td><span class="type-tag">Vec3</span></td><td>3D 纹理</td></tr>
+        <tr><td><strong>Channel</strong>（Buffer 槽位）</td><td><span class="type-tag">Vec2</span></td><td>读取 Buffer A–D 的渲染结果，实现跨通道取值</td></tr>
+        <tr><td><strong>None</strong></td><td>—</td><td>无纹理，恒输出 <code>vec4(0)</code>，用于占位</td></tr>
+      </tbody>
+    </table></div>
+    <h4>采样函数</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>函数</th><th>输入</th><th>输出</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Texture</strong>（常规采样）</td><td>坐标</td><td><span class="type-tag">Vec4</span></td><td>按 UV 采样，自动带 mip 与滤波。99% 的情况用它</td></tr>
+        <tr><td><strong>TextureLod</strong></td><td>坐标 + Lod</td><td><span class="type-tag">Vec4</span></td><td>手动指定 mip 层级采样</td></tr>
+        <tr><td><strong>TexelFetch</strong></td><td>像素坐标 + Lod</td><td><span class="type-tag">Vec4</span></td><td>按整数像素坐标精确读取，不做任何滤波（读 Buffer 单像素时用它）</td></tr>
+        <tr><td><strong>TextureSize</strong></td><td>Lod</td><td>维度向量</td><td>查询纹理尺寸（像素），不做采样</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <!-- Procedural -->
+  <div class="node-card" id="n-proc">
+    <div class="nc-head"><h3>程序化纹理 Procedural Texture</h3><span class="cat-tag cat-texture">Texture</span></div>
+    <div class="nc-io">输入：随纹理类型 <span class="port-tag">◇</span>　·　输出：<span class="port-tag">Output</span>（Float 或 Vec3）</div>
+    <p>用算法直接生成随机数与噪声，无需任何图片资源。所需 GLSL 函数会自动注入编译结果。</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>类型</th><th>输入</th><th>输出</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Hash 1→1</strong></td><td><span class="type-tag">Float</span></td><td><span class="type-tag">Float</span></td><td>单值哈希，输入相同则输出恒定（0~1 随机感）</td></tr>
+        <tr><td><strong>Hash 1→3</strong></td><td><span class="type-tag">Float</span></td><td><span class="type-tag">Vec3</span></td><td>一个数生成三个随机数</td></tr>
+        <tr><td><strong>Hash 2→3</strong></td><td><span class="type-tag">Vec2</span></td><td><span class="type-tag">Vec3</span></td><td>按坐标生成随机颜色 / 随机数</td></tr>
+        <tr><td><strong>Hash 3→3</strong></td><td><span class="type-tag">Vec3</span></td><td><span class="type-tag">Vec3</span></td><td>三维随机数</td></tr>
+        <tr><td><strong>Simplex Noise 2D</strong></td><td><span class="type-tag">Vec2</span></td><td><span class="type-tag">Float</span></td><td>二维单纯形噪声：连续、平滑、无网格感。云、火焰、地形的基础</td></tr>
+        <tr><td><strong>Simplex Noise 3D</strong></td><td><span class="type-tag">Vec3</span></td><td><span class="type-tag">Float</span></td><td>三维版本；把 iTime 当第三维输入即可得到流动的噪声</td></tr>
+        <tr><td><strong>Voronoise</strong></td><td>P <span class="type-tag">Vec2</span>，U / V <span class="type-tag">Float</span></td><td><span class="type-tag">Float</span></td><td>可调噪声：U 越大越接近「网格块状」（Voronoi 感），V 越大越平滑（噪声感），两者之间连续过渡</td></tr>
+      </tbody>
+    </table></div>
+    <h4>用法示例</h4>
+    <p>「输入 uv」×3 →「Simplex Noise 2D」→ 输出，得到流动的黑白云纹；把噪声结果接进「数学计算 mix」的 C 端口做两色渐变，就是最经典的噪声调色。</p>
+  </div>
+
+  <!-- Output -->
+  <div class="node-card" id="n-output">
+    <div class="nc-head"><h3>输出 Output</h3><span class="cat-tag cat-endpoint">Endpoint</span></div>
+    <div class="nc-io">输入：<span class="port-tag">Value ◇</span> <span class="type-tag">Vec4</span>（RGBA）　·　输出：无</div>
+    <p>节点图的终点：写进该通道画面的最终颜色。每个通道的图里都有且必须有一个输出节点，最终显示的颜色就是连到它上面的 RGBA。</p>
+    <div class="tip warn"><span class="t-icon">⚠️</span><span>输出的 alpha 分量决定透明度。壁纸场景下 alpha &lt; 1 可能露出下层内容。</span></div>
+  </div>
+
+  <!-- Group -->
+  <div class="node-card" id="n-group">
+    <div class="nc-head"><h3>节点组 Node Group</h3><span class="cat-tag cat-complex">Complex</span></div>
+    <p>把一段子图封装成一个可复用的「大节点」。编译时整组会变成一个 GLSL 函数，调用它就像调用普通函数一样。</p>
+    <h4>三个配套节点</h4>
+    <div class="table-wrap"><table>
+      <thead><tr><th>节点</th><th>位置</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><strong>组输入 Group Input</strong></td><td>组内部</td><td>声明组的输入端口；这些端口会出现在外部「节点组」节点的左侧</td></tr>
+        <tr><td><strong>组输出 Group Output</strong></td><td>组内部</td><td>声明组的输出端口，把组内结果交还给外部</td></tr>
+        <tr><td><strong>节点组 Node Group</strong></td><td>任意处</td><td>引用某个已定义的组，作为一个节点使用；重命名节点会同步改组名</td></tr>
+      </tbody>
+    </table></div>
+    <h4>用法</h4>
+    <ol class="steps">
+      <li>选中一段节点，选择「创建组」（或先建组再往里填节点）。</li>
+      <li>进入组内部，添加「组输入」「组输出」，把内部逻辑与端口连好。</li>
+      <li>回到上层，组已经变成一个节点，可在同项目内重复摆放。</li>
+    </ol>
+    <div class="tip"><span class="t-icon">💡</span><span>常用套路：把「噪声 + 调色」封装成组，多个项目里反复调用，图面只剩一条主干线。</span></div>
+  </div>
+
+  <!-- FuncCode -->
+  <div class="node-card" id="n-func">
+    <div class="nc-head"><h3>自定义函数 Func Code</h3><span class="cat-tag cat-complex">Complex</span></div>
+    <div class="nc-io">输入 / 输出：由所选函数定义动态决定（可增删，自动命名）　·　各端口均支持 <code>◇</code></div>
+    <p>调用一段<strong>自己维护的 GLSL 代码块</strong>。与节点组不同，它没有内部节点图，而是直接写 GLSL 函数体；输入输出端口的数量与类型由函数签名决定。</p>
+    <h4>适用场景</h4>
+    <ul class="ops">
+      <li>从 ShaderToy 抄来的工具函数（raymarching、SDF 等）直接包成一个节点用。</li>
+      <li>节点图难以表达的复杂算法（比如整段光线步进）。</li>
+      <li>函数会被注册进编译结果，调用处生成 <code>funcName(args...)</code>。</li>
+    </ul>
+  </div>
+
+  <!-- Loop -->
+  <div class="node-card" id="n-loop">
+    <div class="nc-head"><h3>循环与累加器 Loop / Accumulator</h3><span class="cat-tag cat-complex">Complex</span></div>
+    <p>循环节点把一段子图按次数重复执行，等价于 GLSL 的 <code>for</code> 循环。循环组内部由 5 个配套节点协作：</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>节点</th><th>分类</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><strong>迭代索引 Iteration</strong></td><td>Value</td><td>输出当前循环到第几轮（0 开始，Float）。循环内取用</td></tr>
+        <tr><td><strong>累加器初值 Accumulator Initial</strong></td><td>Endpoint</td><td>定义每个累加器的<strong>初始值</strong>，循环开始前执行一次</td></tr>
+        <tr><td><strong>读取累加器 Accumulator Read</strong></td><td>Value</td><td>读取<strong>上一轮</strong>迭代写入的累加器值（第一轮读到初始值）</td></tr>
+        <tr><td><strong>写入累加器 Accumulator Write</strong></td><td>Endpoint</td><td>更新累加器，供下一轮读取。循环结束后保留最终值</td></tr>
+        <tr><td><strong>中断 Break</strong></td><td>Endpoint</td><td>输入一个 Bool，为真时提前跳出循环（<code>if (cond) break;</code>）</td></tr>
+      </tbody>
+    </table></div>
+    <h4>理解累加器</h4>
+    <p>
+      累加器就是循环里的 <code>acc</code> 变量：初值节点决定它从什么开始，
+      每轮先「读取」拿到上一轮的值参与计算，再用「写入」保存这一轮的结果。
+      典型流程：<strong>初值 0 → 每轮 读取 + 累加 → 循环结束输出总和</strong>。
+      配合「迭代索引」可做级数求和、多光源叠加、迭代 SDF 等效果。
+    </p>
+    <div class="tip warn"><span class="t-icon">⚠️</span><span>循环次数过多会显著拖慢渲染。能用数学公式（如 <code>pow</code>、<code>mix</code>）代替的迭代，优先用公式。</span></div>
+  </div>
+</section>
+
+<!-- ================= 11 内置函数 ================= -->
+<section class="doc" id="builtins">
+  <h2><span class="num">11</span>内置 GLSL 函数</h2>
+  <p class="desc">节点库自带的工具函数，使用对应节点时自动注入，也可以在代码编辑器 / 自定义函数里直接调用。</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>函数</th><th>签名</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>sn_hash11</code></td><td><span class="type-tag">Float</span> → <span class="type-tag">Float</span></td><td>整数哈希，返回 0~1 的伪随机数</td></tr>
+        <tr><td><code>sn_hash13</code></td><td><span class="type-tag">Float</span> → <span class="type-tag">Vec3</span></td><td>一入三出哈希</td></tr>
+        <tr><td><code>sn_hash23</code></td><td><span class="type-tag">Vec2</span> → <span class="type-tag">Vec3</span></td><td>按坐标生成随机数（sin 点积风格）</td></tr>
+        <tr><td><code>sn_hash33</code></td><td><span class="type-tag">Vec3</span> → <span class="type-tag">Vec3</span></td><td>三维哈希</td></tr>
+        <tr><td><code>sn_permute3</code> / <code>sn_permute4</code></td><td><span class="type-tag">Vec3/4</span> → 同</td><td>单纯形噪声内部使用的置换函数</td></tr>
+        <tr><td><code>sn_snoise2D</code></td><td><span class="type-tag">Vec2</span> → <span class="type-tag">Float</span></td><td>2D 单纯形噪声（依赖 permute3）</td></tr>
+        <tr><td><code>sn_snoise3D</code></td><td><span class="type-tag">Vec3</span> → <span class="type-tag">Float</span></td><td>3D 单纯形噪声（依赖 permute4）</td></tr>
+        <tr><td><code>sn_voronoise</code></td><td>(<span class="type-tag">Vec2</span>, <span class="type-tag">Float</span>, <span class="type-tag">Float</span>) → <span class="type-tag">Float</span></td><td>可调 Voronoi/噪声混合（依赖 hash23）；U 控制块状度，V 控制平滑度</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 12 FAQ ================= -->
+<section class="doc" id="faq">
+  <h2><span class="num">12</span>常见问题</h2>
+  <div class="table-wrap">
+    <table>
+      <tbody>
+        <tr><td><strong>端口连不上？</strong></td><td>两端数据类型必须兼容（端口颜色相同或可隐式转换）。用「向量合成 / 分解」「分量重排」节点转换类型。</td></tr>
+        <tr><td><strong>画面全黑？</strong></td><td>检查「输出」节点是否连线、alpha 是否为 0；用节点预览从输出端逐级往前排查。</td></tr>
+        <tr><td><strong>画面卡顿 / 发热？</strong></td><td>调低 Buffer 通道分辨率；减少循环迭代次数；噪声节点避免在高分辨率下逐像素多重采样。</td></tr>
+        <tr><td><strong>Buffer 读不到另一个 Buffer？</strong></td><td>通道按 A→B→C→D→Image 顺序执行，只能读到排在自己前面的通道。调整通道顺序（交换功能）。</td></tr>
+        <tr><td><strong>动画不动？</strong></td><td>确认有节点用到了 iTime。静态图永远静止，加入时间输入才会随帧变化。</td></tr>
+        <tr><td><strong>编译报错看不懂？</strong></td><td>错误信息含行号与描述；节点图出错时可切代码视图对照。也可以让 AI 助手帮忙修复。</td></tr>
+        <tr><td><strong>删除的项目能找回吗？</strong></td><td>不能。删除不可恢复，重要作品建议先复制备份。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 13 隐私政策 ================= -->
+<section class="doc" id="privacy">
+  <h2><span class="num">13</span>隐私政策</h2>
+  <p class="desc">本地优先：应用本身不收集个人信息。</p>
+  <ul class="ops">
+    <li><strong>本地数据</strong> — 项目、代码、导入的资源与设置都保存在设备上，卸载或清除应用数据即可删除。</li>
+    <li><strong>可选网络功能</strong> — 只有主动使用 AI 助手或 ShaderToy 浏览/导入时才会联网；请求会发送到你配置的 AI 服务或 shadertoy.com。</li>
+    <li><strong>无广告与统计</strong> — 应用不包含广告、行为统计或崩溃上报 SDK，也不要求注册账号。</li>
+  </ul>
+  <p><a href="privacy.html">阅读完整隐私政策（含 English）→</a></p>
+</section>
+
+<footer>
+  <span>ShaderBox 使用手册 · <a href="privacy.html">隐私政策</a></span>
+  <span>节点与渲染器细节以当前版本实际实现为准</span>
+</footer>
+
+</div>
+</main>
+</div>
+
+<script>
+const links = [...document.querySelectorAll('.nav-group a')];
+const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
